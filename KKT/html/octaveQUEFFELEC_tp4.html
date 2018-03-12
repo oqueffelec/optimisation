@@ -1,0 +1,730 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>octaveQUEFFELEC_tp4</title><meta name="generator" content="MATLAB 9.3"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2017-10-18"><meta name="DC.source" content="octaveQUEFFELEC_tp4.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">TP4 KKT dualite</a></li><li><a href="#3">avec le langrangien</a></li><li><a href="#4">2 pb quadratiques</a></li></ul></div><pre class="codeinput">close <span class="string">all</span>
+clear <span class="string">all</span>
+clc
+</pre><h2 id="2">TP4 KKT dualite</h2><pre class="codeinput"><span class="comment">%Question 1</span>
+<span class="comment">%resolution avec cvx</span>
+f= [30 ; 20];
+b = [24;36;4;-5];
+A = [8 12 ; 12 12 ; 2 1 ; -1 -1];
+cvx_begin
+variable <span class="string">x(2)</span>
+dual <span class="string">variables</span> <span class="string">a</span> <span class="string">p</span>;
+minimize( f'*x )
+subject <span class="string">to</span>
+a : A*x &gt;= b
+p : x &gt;= 0;
+cvx_end
+</pre><pre class="codeoutput"> 
+Calling SDPT3 4.0: 6 variables, 2 equality constraints
+   For improved efficiency, SDPT3 is solving the dual problem.
+------------------------------------------------------------
+
+ num. of constraints =  2
+ dim. of linear var  =  6
+*******************************************************************
+   SDPT3: Infeasible path-following algorithms
+*******************************************************************
+ version  predcorr  gam  expon  scale_data
+    NT      1      0.000   1        0    
+it pstep dstep pinfeas dinfeas  gap      prim-obj      dual-obj    cputime
+-------------------------------------------------------------------
+ 0|0.000|0.000|8.1e+00|3.1e+00|2.7e+03|-5.900000e+02  0.000000e+00| 0:0:00| chol  1  1 
+ 1|0.991|0.969|7.2e-02|1.0e-01|1.6e+02|-2.857586e+01 -1.211580e+02| 0:0:00| chol  1  1 
+ 2|0.683|1.000|2.3e-02|5.5e-04|3.1e+01|-5.605207e+01 -8.439198e+01| 0:0:00| chol  1  1 
+ 3|0.752|1.000|5.6e-03|4.6e-03|1.7e+01|-6.203054e+01 -7.725057e+01| 0:0:00| chol  1  1 
+ 4|1.000|0.843|1.1e-08|1.7e-03|2.2e+00|-6.904033e+01 -7.090109e+01| 0:0:00| chol  1  1 
+ 5|0.982|0.982|1.9e-10|3.1e-05|4.3e-02|-6.998039e+01 -7.001702e+01| 0:0:00| chol  1  1 
+ 6|0.989|0.989|2.4e-11|4.0e-07|4.8e-04|-6.999978e+01 -7.000018e+01| 0:0:00| chol  1  1 
+ 7|0.989|0.989|8.4e-12|4.4e-09|5.2e-06|-7.000000e+01 -7.000000e+01| 0:0:00| chol  1  1 
+ 8|1.000|0.993|6.9e-14|3.3e-11|7.8e-08|-7.000000e+01 -7.000000e+01| 0:0:00|
+  stop: max(relative gap, infeasibilities) &lt; 1.49e-08
+-------------------------------------------------------------------
+ number of iterations   =  8
+ primal objective value = -7.00000000e+01
+ dual   objective value = -7.00000000e+01
+ gap := trace(XZ)       = 7.76e-08
+ relative gap           = 5.50e-10
+ actual relative gap    = 5.05e-10
+ rel. primal infeas (scaled problem)   = 6.90e-14
+ rel. dual     "        "       "      = 3.26e-11
+ rel. primal infeas (unscaled problem) = 0.00e+00
+ rel. dual     "        "       "      = 0.00e+00
+ norm(X), norm(y), norm(Z) = 1.0e+01, 2.2e+00, 8.5e+00
+ norm(A), norm(b), norm(C) = 2.3e+01, 3.7e+01, 4.5e+01
+ Total CPU time (secs)  = 0.30  
+ CPU time per iteration = 0.04  
+ termination code       =  0
+ DIMACS: 8.2e-14  0.0e+00  3.9e-11  0.0e+00  5.0e-10  5.5e-10
+-------------------------------------------------------------------
+ 
+------------------------------------------------------------
+Status: Solved
+Optimal value (cvx_optval): +70
+ 
+</pre><h2 id="3">avec le langrangien</h2><pre class="codeinput"><span class="comment">% a et p sont des multiplicateurs de lagrange = dual variables</span>
+f - A'*a - p
+sign(A*x-b)
+sign(x)
+sign(a)
+sign(p)
+a.*(A*x-b)
+p.*x
+
+ind =find(abs(a)&gt;0.00001)
+A(ind,:)\b(ind)
+
+<span class="comment">% le pb dual</span>
+
+cvx_begin
+variable <span class="string">y(4)</span>
+dual <span class="string">variables</span> <span class="string">d</span> <span class="string">e</span>;
+maximize( b'*y )
+subject <span class="string">to</span>
+d : A'*y &lt;= f;
+e : y &gt;=0 ;
+cvx_end
+
+<span class="comment">% pb primal avec linprog</span>
+[xl c e o du] = linprog(f,-A,-b,[],[],0*f);
+
+<span class="comment">%verif de l'optimabilit&eacute;</span>
+a = du.ineqlin;
+p = du.lower;
+f - A'*a - p
+sign(A*xl-b)
+sign(xl)
+sign(a)
+sign(p)
+a.*(A*xl-b)
+p.*x
+</pre><pre class="codeoutput">
+ans =
+
+   1.0e-14 *
+
+   -0.1074
+    0.2479
+
+
+ans =
+
+     1
+     1
+     1
+     1
+
+
+ans =
+
+     1
+     1
+
+
+ans =
+
+     1
+     1
+     1
+     1
+
+
+ans =
+
+     1
+     1
+
+
+ans =
+
+   1.0e-07 *
+
+    0.0958
+    0.1205
+    0.2079
+    0.0958
+
+
+ans =
+
+   1.0e-08 *
+
+    0.9582
+    0.9584
+
+
+ind =
+
+     2
+     3
+
+
+ans =
+
+     1
+     2
+
+ 
+Calling SDPT3 4.0: 6 variables, 2 equality constraints
+------------------------------------------------------------
+
+ num. of constraints =  2
+ dim. of linear var  =  6
+*******************************************************************
+   SDPT3: Infeasible path-following algorithms
+*******************************************************************
+ version  predcorr  gam  expon  scale_data
+    NT      1      0.000   1        0    
+it pstep dstep pinfeas dinfeas  gap      prim-obj      dual-obj    cputime
+-------------------------------------------------------------------
+ 0|0.000|0.000|8.1e+00|3.1e+00|2.7e+03|-5.900000e+02  0.000000e+00| 0:0:00| chol  1  1 
+ 1|0.991|0.969|7.2e-02|1.0e-01|1.6e+02|-2.857586e+01 -1.211580e+02| 0:0:00| chol  1  1 
+ 2|0.683|1.000|2.3e-02|5.5e-04|3.1e+01|-5.605207e+01 -8.439198e+01| 0:0:00| chol  1  1 
+ 3|0.752|1.000|5.6e-03|4.6e-03|1.7e+01|-6.203054e+01 -7.725057e+01| 0:0:00| chol  1  1 
+ 4|1.000|0.843|1.1e-08|1.7e-03|2.2e+00|-6.904033e+01 -7.090109e+01| 0:0:00| chol  1  1 
+ 5|0.982|0.982|1.9e-10|3.1e-05|4.3e-02|-6.998039e+01 -7.001702e+01| 0:0:00| chol  1  1 
+ 6|0.989|0.989|2.4e-11|4.0e-07|4.8e-04|-6.999978e+01 -7.000018e+01| 0:0:00| chol  1  1 
+ 7|0.989|0.989|8.4e-12|4.4e-09|5.2e-06|-7.000000e+01 -7.000000e+01| 0:0:00| chol  1  1 
+ 8|1.000|0.993|6.8e-14|3.3e-11|7.8e-08|-7.000000e+01 -7.000000e+01| 0:0:00|
+  stop: max(relative gap, infeasibilities) &lt; 1.49e-08
+-------------------------------------------------------------------
+ number of iterations   =  8
+ primal objective value = -7.00000000e+01
+ dual   objective value = -7.00000000e+01
+ gap := trace(XZ)       = 7.76e-08
+ relative gap           = 5.50e-10
+ actual relative gap    = 5.05e-10
+ rel. primal infeas (scaled problem)   = 6.80e-14
+ rel. dual     "        "       "      = 3.26e-11
+ rel. primal infeas (unscaled problem) = 0.00e+00
+ rel. dual     "        "       "      = 0.00e+00
+ norm(X), norm(y), norm(Z) = 1.0e+01, 2.2e+00, 8.5e+00
+ norm(A), norm(b), norm(C) = 2.3e+01, 3.7e+01, 4.5e+01
+ Total CPU time (secs)  = 0.08  
+ CPU time per iteration = 0.01  
+ termination code       =  0
+ DIMACS: 8.1e-14  0.0e+00  3.9e-11  0.0e+00  5.0e-10  5.5e-10
+-------------------------------------------------------------------
+ 
+------------------------------------------------------------
+Status: Solved
+Optimal value (cvx_optval): +70
+ 
+
+Optimal solution found.
+
+
+ans =
+
+     0
+     0
+
+
+ans =
+
+     1
+     0
+     0
+     1
+
+
+ans =
+
+     1
+     1
+
+
+ans =
+
+     0
+     1
+     1
+     0
+
+
+ans =
+
+     0
+     0
+
+
+ans =
+
+     0
+     0
+     0
+     0
+
+
+ans =
+
+     0
+     0
+
+</pre><h2 id="4">2 pb quadratiques</h2><p>resolution avec cvx</p><pre class="codeinput">cvx_begin
+variables <span class="string">x1</span> <span class="string">x2</span>
+dual <span class="string">variables</span> <span class="string">d</span> <span class="string">e1</span> <span class="string">e2</span>;
+minimize( .75*x1^2 + .75*x2^2 +.25*(x1+x2)^2 - 6* x1 - 8 *x2 )
+subject <span class="string">to</span>
+d : x1 + x2 == 5;
+e1 : x1 &gt;=0 ;
+e2 : x2 &gt;=0 ;
+cvx_end
+
+<span class="comment">% resolution sous forme matricielle</span>
+Q = 2*[1 0.25 ; 0.25 1];
+f = [-6 ; -8];
+A = [-1 -1];
+b = -5;
+tic
+cvx_begin
+variables <span class="string">x(2)</span>
+dual <span class="string">variables</span> <span class="string">d</span> <span class="string">e</span>;
+minimize( .5*x'*Q*x + f'*x )
+subject <span class="string">to</span>
+d : -A*x == -b;
+e : x &gt;=0 ;
+cvx_end
+
+<span class="comment">% verification de la convexit&eacute; du pb</span>
+eig(Q) <span class="comment">% pour que Q soit defini positive et que le pb soit donc convexe, on d'assure que ses vp soient positives.</span>
+
+<span class="comment">% lagrangien et verif des kkt</span>
+
+Q*x + f + A'*d - e
+A*x-b
+sign(e)
+e.*x
+
+<span class="comment">% solution optimale</span>
+
+[Q A'; A 0]\[-f;b]
+
+<span class="comment">% on modifie le pb</span>
+Q = 2*[1 0.25 0 ; 0.25 1 .25 ; 0 .25 1];
+f = [-6 ; -8 ; -2];
+A = [-1 -1 -1];
+b = -5;
+cvx_begin
+variables <span class="string">x(3)</span>
+dual <span class="string">variables</span> <span class="string">d</span> <span class="string">e</span>;
+minimize( .5*x'*Q*x + f'*x )
+subject <span class="string">to</span>
+d : A*x == b;
+e : x &gt;=0 ;
+cvx_end
+
+<span class="comment">% verif de l'optimi des kkt</span>
+Q*x + f - A'*d - e
+-A*x+b
+sign(e)
+e.*x
+</pre><pre class="codeoutput"> 
+Calling SDPT3 4.0: 11 variables, 4 equality constraints
+   For improved efficiency, SDPT3 is solving the dual problem.
+------------------------------------------------------------
+
+ num. of constraints =  4
+ dim. of sdp    var  =  6,   num. of sdp  blk  =  3
+ dim. of linear var  =  2
+*******************************************************************
+   SDPT3: Infeasible path-following algorithms
+*******************************************************************
+ version  predcorr  gam  expon  scale_data
+   HKM      1      0.000   1        0    
+it pstep dstep pinfeas dinfeas  gap      prim-obj      dual-obj    cputime
+-------------------------------------------------------------------
+ 0|0.000|0.000|5.0e+00|2.3e+00|8.0e+02| 8.000000e+01  0.000000e+00| 0:0:00| chol  1  1 
+ 1|0.849|0.900|7.6e-01|2.4e-01|1.1e+02|-3.310467e+00 -1.928656e+01| 0:0:00| chol  1  1 
+ 2|0.870|1.000|9.9e-02|2.3e-03|3.7e+01|-6.558232e-01 -2.771961e+01| 0:0:00| chol  1  1 
+ 3|0.963|1.000|3.7e-03|1.9e-03|1.6e+00|-1.918225e+01 -2.030143e+01| 0:0:00| chol  1  1 
+ 4|0.969|0.965|1.2e-04|1.6e-04|5.9e-02|-1.993188e+01 -1.997005e+01| 0:0:00| chol  1  1 
+ 5|0.983|0.998|1.9e-06|5.7e-06|2.7e-03|-1.995676e+01 -1.995890e+01| 0:0:00| chol  1  1 
+ 6|0.958|0.978|8.2e-08|2.5e-07|1.1e-04|-1.995826e+01 -1.995835e+01| 0:0:00| chol  1  1 
+ 7|0.998|1.000|4.6e-10|7.6e-09|6.6e-06|-1.995833e+01 -1.995834e+01| 0:0:00| chol  1  1 
+ 8|1.000|1.000|5.9e-11|9.3e-11|7.5e-07|-1.995833e+01 -1.995833e+01| 0:0:00| chol  1  1 
+ 9|1.000|1.000|3.2e-12|1.2e-11|3.0e-08|-1.995833e+01 -1.995833e+01| 0:0:00|
+  stop: max(relative gap, infeasibilities) &lt; 1.49e-08
+-------------------------------------------------------------------
+ number of iterations   =  9
+ primal objective value = -1.99583333e+01
+ dual   objective value = -1.99583333e+01
+ gap := trace(XZ)       = 3.00e-08
+ relative gap           = 7.34e-10
+ actual relative gap    = 7.08e-10
+ rel. primal infeas (scaled problem)   = 3.18e-12
+ rel. dual     "        "       "      = 1.19e-11
+ rel. primal infeas (unscaled problem) = 0.00e+00
+ rel. dual     "        "       "      = 0.00e+00
+ norm(X), norm(y), norm(Z) = 1.1e+01, 2.7e+01, 2.9e+01
+ norm(A), norm(b), norm(C) = 4.0e+00, 3.3e+00, 1.2e+01
+ Total CPU time (secs)  = 0.24  
+ CPU time per iteration = 0.03  
+ termination code       =  0
+ DIMACS: 3.5e-12  0.0e+00  2.4e-11  0.0e+00  7.1e-10  7.3e-10
+-------------------------------------------------------------------
+ 
+------------------------------------------------------------
+Status: Solved
+Optimal value (cvx_optval): -20.0417
+ 
+ 
+Calling SDPT3 4.0: 6 variables, 2 equality constraints
+   For improved efficiency, SDPT3 is solving the dual problem.
+------------------------------------------------------------
+
+ num. of constraints =  2
+ dim. of socp   var  =  4,   num. of socp blk  =  1
+ dim. of linear var  =  2
+*******************************************************************
+   SDPT3: Infeasible path-following algorithms
+*******************************************************************
+ version  predcorr  gam  expon  scale_data
+    NT      1      0.000   1        0    
+it pstep dstep pinfeas dinfeas  gap      prim-obj      dual-obj    cputime
+-------------------------------------------------------------------
+ 0|0.000|0.000|5.5e-01|1.7e+00|2.2e+02| 5.000000e+01  0.000000e+00| 0:0:00| chol  1  1 
+ 1|1.000|0.813|6.2e-07|3.3e-01|5.1e+01| 1.696831e+01 -9.089566e+00| 0:0:00| chol  1  1 
+ 2|0.630|0.801|5.7e-07|6.7e-02|2.1e+01|-1.188977e+00 -1.726993e+01| 0:0:00| chol  1  1 
+ 3|0.647|1.000|2.8e-07|2.1e-04|8.2e+00|-1.295083e+01 -2.114444e+01| 0:0:00| chol  1  1 
+ 4|0.971|0.949|1.3e-08|3.1e-05|3.7e-01|-2.059018e+01 -2.096252e+01| 0:0:00| chol  1  1 
+ 5|0.982|0.973|1.8e-10|2.9e-06|7.0e-03|-2.095151e+01 -2.095823e+01| 0:0:00| chol  1  1 
+ 6|0.978|0.999|2.9e-09|2.2e-07|1.5e-04|-2.095819e+01 -2.095832e+01| 0:0:00| chol  1  1 
+ 7|0.912|1.000|1.1e-09|5.5e-11|1.7e-05|-2.095832e+01 -2.095834e+01| 0:0:00| chol  1  1 
+ 8|0.986|0.996|2.9e-10|8.3e-11|5.7e-07|-2.095833e+01 -2.095833e+01| 0:0:00|
+  stop: max(relative gap, infeasibilities) &lt; 1.49e-08
+-------------------------------------------------------------------
+ number of iterations   =  8
+ primal objective value = -2.09583328e+01
+ dual   objective value = -2.09583334e+01
+ gap := trace(XZ)       = 5.72e-07
+ relative gap           = 1.33e-08
+ actual relative gap    = 1.33e-08
+ rel. primal infeas (scaled problem)   = 2.95e-10
+ rel. dual     "        "       "      = 8.34e-11
+ rel. primal infeas (unscaled problem) = 0.00e+00
+ rel. dual     "        "       "      = 0.00e+00
+ norm(X), norm(y), norm(Z) = 2.4e+01, 8.8e+00, 1.3e+01
+ norm(A), norm(b), norm(C) = 3.3e+00, 3.8e+00, 8.1e+00
+ Total CPU time (secs)  = 0.15  
+ CPU time per iteration = 0.02  
+ termination code       =  0
+ DIMACS: 3.8e-10  0.0e+00  1.1e-10  0.0e+00  1.3e-08  1.3e-08
+-------------------------------------------------------------------
+ 
+------------------------------------------------------------
+Status: Solved
+Optimal value (cvx_optval): -20.0417
+ 
+
+ans =
+
+    1.5000
+    2.5000
+
+
+ans =
+
+   1.0e-04 *
+
+   -0.1009
+   -0.5018
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+     1
+
+
+ans =
+
+   1.0e-06 *
+
+    0.2214
+    0.2098
+
+
+ans =
+
+    1.8333
+    3.1667
+   -0.7500
+
+ 
+Calling SDPT3 4.0: 8 variables, 3 equality constraints
+   For improved efficiency, SDPT3 is solving the dual problem.
+------------------------------------------------------------
+
+ num. of constraints =  3
+ dim. of socp   var  =  5,   num. of socp blk  =  1
+ dim. of linear var  =  3
+*******************************************************************
+   SDPT3: Infeasible path-following algorithms
+*******************************************************************
+ version  predcorr  gam  expon  scale_data
+    NT      1      0.000   1        0    
+it pstep dstep pinfeas dinfeas  gap      prim-obj      dual-obj    cputime
+-------------------------------------------------------------------
+ 0|0.000|0.000|8.8e-01|2.1e+00|3.3e+02| 5.000000e+01  0.000000e+00| 0:0:00| chol  1  1 
+ 1|0.970|0.856|2.7e-02|3.2e-01|6.6e+01| 2.627011e+01 -4.419453e+00| 0:0:00| chol  1  1 
+ 2|1.000|0.955|3.8e-07|1.6e-02|1.6e+01| 2.313887e+00 -1.191653e+01| 0:0:00| chol  1  1 
+ 3|0.861|1.000|1.0e-07|2.5e-04|3.6e+00|-7.918742e+00 -1.148268e+01| 0:0:00| chol  1  1 
+ 4|1.000|1.000|1.1e-07|2.5e-05|8.0e-01|-1.047157e+01 -1.127129e+01| 0:0:00| chol  1  1 
+ 5|1.000|0.905|1.3e-09|4.6e-06|9.1e-02|-1.090119e+01 -1.099187e+01| 0:0:00| chol  1  1 
+ 6|0.884|0.979|1.5e-09|3.4e-07|1.6e-02|-1.094938e+01 -1.096528e+01| 0:0:00| chol  1  1 
+ 7|1.000|1.000|3.7e-09|2.5e-08|1.9e-03|-1.095722e+01 -1.095911e+01| 0:0:00| chol  1  1 
+ 8|0.988|0.983|1.8e-10|8.6e-10|2.6e-05|-1.095832e+01 -1.095834e+01| 0:0:00| chol  1  1 
+ 9|0.983|0.946|6.1e-12|8.2e-11|8.7e-07|-1.095833e+01 -1.095833e+01| 0:0:00| chol  1  1 
+10|1.000|0.967|1.2e-13|3.9e-12|6.3e-08|-1.095833e+01 -1.095833e+01| 0:0:00|
+  stop: max(relative gap, infeasibilities) &lt; 1.49e-08
+-------------------------------------------------------------------
+ number of iterations   = 10
+ primal objective value = -1.09583333e+01
+ dual   objective value = -1.09583334e+01
+ gap := trace(XZ)       = 6.29e-08
+ relative gap           = 2.75e-09
+ actual relative gap    = 2.73e-09
+ rel. primal infeas (scaled problem)   = 1.24e-13
+ rel. dual     "        "       "      = 3.94e-12
+ rel. primal infeas (unscaled problem) = 0.00e+00
+ rel. dual     "        "       "      = 0.00e+00
+ norm(X), norm(y), norm(Z) = 2.4e+01, 9.2e+00, 1.3e+01
+ norm(A), norm(b), norm(C) = 4.1e+00, 5.9e+00, 8.1e+00
+ Total CPU time (secs)  = 0.09  
+ CPU time per iteration = 0.01  
+ termination code       =  0
+ DIMACS: 1.5e-13  0.0e+00  5.3e-12  0.0e+00  2.7e-09  2.7e-09
+-------------------------------------------------------------------
+ 
+------------------------------------------------------------
+Status: Solved
+Optimal value (cvx_optval): -20.0417
+ 
+
+ans =
+
+   1.0e-04 *
+
+   -0.3235
+   -0.3370
+    0.5669
+
+
+ans =
+
+     0
+
+
+ans =
+
+     1
+     1
+     1
+
+
+ans =
+
+   1.0e-07 *
+
+    0.1272
+    0.1272
+    0.2107
+
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2017b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+close all
+clear all
+clc
+%% TP4 KKT dualite 
+%Question 1
+%resolution avec cvx
+f= [30 ; 20];
+b = [24;36;4;-5];
+A = [8 12 ; 12 12 ; 2 1 ; -1 -1];
+cvx_begin
+variable x(2)
+dual variables a p;
+minimize( f'*x )
+subject to
+a : A*x >= b
+p : x >= 0;
+cvx_end
+
+%% avec le langrangien 
+
+% a et p sont des multiplicateurs de lagrange = dual variables 
+f - A'*a - p
+sign(A*x-b)
+sign(x)
+sign(a)
+sign(p)
+a.*(A*x-b)
+p.*x
+
+ind =find(abs(a)>0.00001)
+A(ind,:)\b(ind)
+
+% le pb dual 
+
+cvx_begin
+variable y(4)
+dual variables d e;
+maximize( b'*y )
+subject to
+d : A'*y <= f;
+e : y >=0 ;
+cvx_end
+
+% pb primal avec linprog
+[xl c e o du] = linprog(f,-A,-b,[],[],0*f);
+
+%verif de l'optimabilité 
+a = du.ineqlin;
+p = du.lower;
+f - A'*a - p
+sign(A*xl-b)
+sign(xl)
+sign(a)
+sign(p)
+a.*(A*xl-b)
+p.*x
+
+%% 2 pb quadratiques 
+% resolution avec cvx
+cvx_begin
+variables x1 x2
+dual variables d e1 e2;
+minimize( .75*x1^2 + .75*x2^2 +.25*(x1+x2)^2 - 6* x1 - 8 *x2 )
+subject to
+d : x1 + x2 == 5;
+e1 : x1 >=0 ;
+e2 : x2 >=0 ;
+cvx_end
+
+% resolution sous forme matricielle 
+Q = 2*[1 0.25 ; 0.25 1];
+f = [-6 ; -8];
+A = [-1 -1];
+b = -5;
+tic
+cvx_begin
+variables x(2)
+dual variables d e;
+minimize( .5*x'*Q*x + f'*x )
+subject to
+d : -A*x == -b;
+e : x >=0 ;
+cvx_end
+
+% verification de la convexité du pb 
+eig(Q) % pour que Q soit defini positive et que le pb soit donc convexe, on d'assure que ses vp soient positives.
+
+% lagrangien et verif des kkt 
+
+Q*x + f + A'*d - e
+A*x-b
+sign(e)
+e.*x
+
+% solution optimale 
+
+[Q A'; A 0]\[-f;b]
+
+% on modifie le pb 
+Q = 2*[1 0.25 0 ; 0.25 1 .25 ; 0 .25 1];
+f = [-6 ; -8 ; -2];
+A = [-1 -1 -1];
+b = -5;
+cvx_begin
+variables x(3)
+dual variables d e;
+minimize( .5*x'*Q*x + f'*x )
+subject to
+d : A*x == b;
+e : x >=0 ;
+cvx_end
+
+% verif de l'optimi des kkt
+Q*x + f - A'*d - e
+-A*x+b
+sign(e)
+e.*x
+
+
+
+
+##### SOURCE END #####
+--></body></html>

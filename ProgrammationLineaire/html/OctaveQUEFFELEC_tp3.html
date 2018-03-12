@@ -1,0 +1,622 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>OctaveQUEFFELEC_tp3</title><meta name="generator" content="MATLAB 8.6"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2017-10-11"><meta name="DC.source" content="OctaveQUEFFELEC_tp3.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">TP3 PROG LINEAIRE</a></li><li><a href="#3">Avec CVX</a></li><li><a href="#4">Sous forme matriciel</a></li><li><a href="#5">Avec CVX sous forme standard</a></li><li><a href="#6">Avec GLPK sous forme standard</a></li><li><a href="#7">Avec linprog sous forme standard</a></li><li><a href="#8">Comparaison des differents solveurs</a></li><li><a href="#9">Question 2</a></li><li><a href="#10">lineaire avec CVX</a></li><li><a href="#11">Lineaire et standard avec CVX</a></li><li><a href="#12">Avec linprog</a></li><li><a href="#13">Avec GUROBI</a></li><li><a href="#14">Avec Cplex</a></li><li><a href="#15">Avec GLPK</a></li><li><a href="#16">Comparaison des solveurs</a></li></ul></div><pre class="codeinput">close <span class="string">all</span>
+clear <span class="string">all</span>
+clc
+</pre><h2>TP3 PROG LINEAIRE<a name="2"></a></h2><pre class="codeinput"><span class="comment">%Question 1</span>
+</pre><h2>Avec CVX<a name="3"></a></h2><pre class="codeinput">tic
+cvx_begin
+variables <span class="string">x_1</span> <span class="string">x_2</span>
+dual <span class="string">variables</span> <span class="string">lip</span> <span class="string">glu</span> <span class="string">pro</span> <span class="string">die</span> <span class="string">p1</span> <span class="string">p2</span>;
+minimize( 30*x_1 + 20*x_2 )
+subject <span class="string">to</span>
+lip : 8 *x_1 + 12* x_2 &gt;= 24;
+glu : 12 *x_1 + 12 *x_2 &gt;= 36;
+pro : 2 *x_1 + x_2 &gt;= 4;
+die : x_1 + x_2 &lt;= 5;
+p1 : x_1 &gt;=0;
+p2 : x_2 &gt;=0;
+cvx_end
+temps_cvx=toc;
+</pre><pre class="codeoutput"> 
+Calling SDPT3 4.0: 6 variables, 2 equality constraints
+   For improved efficiency, SDPT3 is solving the dual problem.
+------------------------------------------------------------
+
+ num. of constraints =  2
+ dim. of linear var  =  6
+*******************************************************************
+   SDPT3: Infeasible path-following algorithms
+*******************************************************************
+ version  predcorr  gam  expon  scale_data
+    NT      1      0.000   1        0    
+it pstep dstep pinfeas dinfeas  gap      prim-obj      dual-obj    cputime
+-------------------------------------------------------------------
+ 0|0.000|0.000|8.1e+00|3.1e+00|2.7e+03|-5.900000e+02  0.000000e+00| 0:0:00| chol  1  1 
+ 1|0.991|0.969|7.2e-02|1.0e-01|1.6e+02|-2.857586e+01 -1.211580e+02| 0:0:00| chol  1  1 
+ 2|0.683|1.000|2.3e-02|5.5e-04|3.1e+01|-5.605207e+01 -8.439198e+01| 0:0:00| chol  1  1 
+ 3|0.752|1.000|5.6e-03|4.6e-03|1.7e+01|-6.203054e+01 -7.725057e+01| 0:0:00| chol  1  1 
+ 4|1.000|0.843|1.1e-08|1.7e-03|2.2e+00|-6.904033e+01 -7.090109e+01| 0:0:00| chol  1  1 
+ 5|0.982|0.982|1.9e-10|3.1e-05|4.3e-02|-6.998039e+01 -7.001702e+01| 0:0:00| chol  1  1 
+ 6|0.989|0.989|2.4e-11|4.0e-07|4.8e-04|-6.999978e+01 -7.000018e+01| 0:0:00| chol  1  1 
+ 7|0.989|0.989|8.4e-12|4.4e-09|5.2e-06|-7.000000e+01 -7.000000e+01| 0:0:00| chol  1  1 
+ 8|1.000|0.993|6.9e-14|3.3e-11|7.8e-08|-7.000000e+01 -7.000000e+01| 0:0:00|
+  stop: max(relative gap, infeasibilities) &lt; 1.49e-08
+-------------------------------------------------------------------
+ number of iterations   =  8
+ primal objective value = -7.00000000e+01
+ dual   objective value = -7.00000000e+01
+ gap := trace(XZ)       = 7.76e-08
+ relative gap           = 5.50e-10
+ actual relative gap    = 5.05e-10
+ rel. primal infeas (scaled problem)   = 6.90e-14
+ rel. dual     "        "       "      = 3.26e-11
+ rel. primal infeas (unscaled problem) = 0.00e+00
+ rel. dual     "        "       "      = 0.00e+00
+ norm(X), norm(y), norm(Z) = 1.0e+01, 2.2e+00, 8.5e+00
+ norm(A), norm(b), norm(C) = 2.3e+01, 3.7e+01, 4.5e+01
+ Total CPU time (secs)  = 0.33  
+ CPU time per iteration = 0.04  
+ termination code       =  0
+ DIMACS: 8.2e-14  0.0e+00  3.9e-11  0.0e+00  5.0e-10  5.5e-10
+-------------------------------------------------------------------
+ 
+------------------------------------------------------------
+Status: Solved
+Optimal value (cvx_optval): +70
+ 
+</pre><h2>Sous forme matriciel<a name="4"></a></h2><pre class="codeinput">f = [30 ; 20];
+b = [24;36;4;-5];
+A = [8 12 ; 12 12 ; 2 1 ; -1 -1];
+</pre><h2>Avec CVX sous forme standard<a name="5"></a></h2><pre class="codeinput">tic
+cvx_begin
+variable <span class="string">x(2)</span>
+dual <span class="string">variables</span> <span class="string">a</span> <span class="string">p</span>;
+minimize( f'*x )
+subject <span class="string">to</span>
+    a : A*x &gt;= b
+    p : x&gt;=0;
+cvx_end
+temps_cvxMatriciel=toc
+</pre><pre class="codeoutput"> 
+Calling SDPT3 4.0: 6 variables, 2 equality constraints
+   For improved efficiency, SDPT3 is solving the dual problem.
+------------------------------------------------------------
+
+ num. of constraints =  2
+ dim. of linear var  =  6
+*******************************************************************
+   SDPT3: Infeasible path-following algorithms
+*******************************************************************
+ version  predcorr  gam  expon  scale_data
+    NT      1      0.000   1        0    
+it pstep dstep pinfeas dinfeas  gap      prim-obj      dual-obj    cputime
+-------------------------------------------------------------------
+ 0|0.000|0.000|8.1e+00|3.1e+00|2.7e+03|-5.900000e+02  0.000000e+00| 0:0:00| chol  1  1 
+ 1|0.991|0.969|7.2e-02|1.0e-01|1.6e+02|-2.857586e+01 -1.211580e+02| 0:0:00| chol  1  1 
+ 2|0.683|1.000|2.3e-02|5.5e-04|3.1e+01|-5.605207e+01 -8.439198e+01| 0:0:00| chol  1  1 
+ 3|0.752|1.000|5.6e-03|4.6e-03|1.7e+01|-6.203054e+01 -7.725057e+01| 0:0:00| chol  1  1 
+ 4|1.000|0.843|1.1e-08|1.7e-03|2.2e+00|-6.904033e+01 -7.090109e+01| 0:0:00| chol  1  1 
+ 5|0.982|0.982|1.9e-10|3.1e-05|4.3e-02|-6.998039e+01 -7.001702e+01| 0:0:00| chol  1  1 
+ 6|0.989|0.989|2.4e-11|4.0e-07|4.8e-04|-6.999978e+01 -7.000018e+01| 0:0:00| chol  1  1 
+ 7|0.989|0.989|8.4e-12|4.4e-09|5.2e-06|-7.000000e+01 -7.000000e+01| 0:0:00| chol  1  1 
+ 8|1.000|0.993|6.9e-14|3.3e-11|7.8e-08|-7.000000e+01 -7.000000e+01| 0:0:00|
+  stop: max(relative gap, infeasibilities) &lt; 1.49e-08
+-------------------------------------------------------------------
+ number of iterations   =  8
+ primal objective value = -7.00000000e+01
+ dual   objective value = -7.00000000e+01
+ gap := trace(XZ)       = 7.76e-08
+ relative gap           = 5.50e-10
+ actual relative gap    = 5.05e-10
+ rel. primal infeas (scaled problem)   = 6.90e-14
+ rel. dual     "        "       "      = 3.26e-11
+ rel. primal infeas (unscaled problem) = 0.00e+00
+ rel. dual     "        "       "      = 0.00e+00
+ norm(X), norm(y), norm(Z) = 1.0e+01, 2.2e+00, 8.5e+00
+ norm(A), norm(b), norm(C) = 2.3e+01, 3.7e+01, 4.5e+01
+ Total CPU time (secs)  = 0.07  
+ CPU time per iteration = 0.01  
+ termination code       =  0
+ DIMACS: 8.2e-14  0.0e+00  3.9e-11  0.0e+00  5.0e-10  5.5e-10
+-------------------------------------------------------------------
+ 
+------------------------------------------------------------
+Status: Solved
+Optimal value (cvx_optval): +70
+ 
+
+temps_cvxMatriciel =
+
+    0.2489
+
+</pre><h2>Avec GLPK sous forme standard<a name="6"></a></h2><pre class="codeinput">ctype =<span class="string">'UUUU'</span>; <span class="comment">% contraintes d&eacute;'&eacute;galites</span>
+vartype =<span class="string">'CC'</span>; <span class="comment">% variables continues</span>
+s = 1;          <span class="comment">% 1 minimisation (-1 -&gt; maximisation)</span>
+param.msglev = 1;
+param.itlim = 100;
+tic
+[xmin_g,fmin,status,extra]=glpk(f,-A,-b,0*f, [], ctype, vartype, s, param);
+temps_GLPK=toc
+</pre><pre class="codeoutput">
+temps_GLPK =
+
+    0.0132
+
+</pre><h2>Avec linprog sous forme standard<a name="7"></a></h2><pre class="codeinput">tic
+[xl c e o p] = linprog(f,-A,-b,[],[],0*f);
+temps_linprog=toc;
+</pre><pre class="codeoutput">Optimization terminated.
+</pre><h2>Comparaison des differents solveurs<a name="8"></a></h2><pre class="codeinput">[[x_1;x_2] x xl xmin_g]
+
+<span class="comment">% Les solveurs trouvent les memes solutions.</span>
+<span class="comment">% Par contre, GLPK est le solveur le plus rapide avec un temps d'execution</span>
+<span class="comment">% de 0.01s, par rapport &agrave; linprog (0.18s) et cvx avec forme standard(0.28s)</span>
+</pre><pre class="codeoutput">
+ans =
+
+    1.0000    1.0000    1.0000    1.0000
+    2.0000    2.0000    2.0000    2.0000
+
+</pre><h2>Question 2<a name="9"></a></h2><h2>lineaire avec CVX<a name="10"></a></h2><pre class="codeinput">close <span class="string">all</span>
+clear <span class="string">all</span>
+clc
+
+
+a = [400; 1500; 900];
+b = [700; 600; 1000; 500];
+C = [20 40 70 50
+100 60 90 80
+10 110 30 200];
+[n,p] =size(C);
+tic
+cvx_begin
+    variable <span class="string">X(n,p)</span>
+    dual <span class="string">variables</span> <span class="string">D</span> <span class="string">A</span> <span class="string">pos</span>;
+    minimize(sum(sum(C.*X)))
+    subject <span class="string">to</span>
+        D : sum(X) == b';
+        A : sum(X') == a';
+        pos : X &gt;= 0;
+cvx_end
+temps2_cvx=toc
+</pre><pre class="codeoutput"> 
+Calling SDPT3 4.0: 12 variables, 7 equality constraints
+------------------------------------------------------------
+
+ num. of constraints =  7
+ dim. of linear var  = 12
+*******************************************************************
+   SDPT3: Infeasible path-following algorithms
+*******************************************************************
+ version  predcorr  gam  expon  scale_data
+    NT      1      0.000   1        0    
+it pstep dstep pinfeas dinfeas  gap      prim-obj      dual-obj    cputime
+-------------------------------------------------------------------
+ 0|0.000|0.000|4.7e+00|3.5e+00|4.1e+06| 1.292998e+05  0.000000e+00| 0:0:00| chol  1  1 
+ 1|0.993|1.000|3.2e-02|8.1e-03|4.5e+05|-8.942623e+03 -4.357453e+05| 0:0:00| chol  1  1 
+ 2|1.000|0.909|8.1e-08|9.3e-03|4.0e+04|-2.842906e+04 -6.694043e+04| 0:0:00| chol  1  1 
+ 3|0.732|1.000|2.1e-08|7.3e-04|2.0e+04|-4.101713e+04 -6.063243e+04| 0:0:00| chol  1  1 
+ 4|0.983|0.953|4.0e-08|2.4e-04|8.1e+02|-4.766245e+04 -4.843053e+04| 0:0:00| chol  1  1 
+ 5|0.986|0.987|6.4e-10|6.8e-05|1.1e+01|-4.799538e+04 -4.799459e+04| 0:0:00| chol  1  1 
+ 6|0.989|0.989|1.3e-11|2.0e-05|1.2e-01|-4.799995e+04 -4.799658e+04| 0:0:00| chol  2  2 
+ 7|0.989|0.989|9.7e-11|2.2e-07|1.3e-03|-4.800000e+04 -4.799996e+04| 0:0:00| chol  2  1 
+ 8|0.989|0.989|2.1e-12|2.4e-09|1.5e-05|-4.800000e+04 -4.800000e+04| 0:0:00|
+  stop: max(relative gap, infeasibilities) &lt; 1.49e-08
+-------------------------------------------------------------------
+ number of iterations   =  8
+ primal objective value = -4.80000000e+04
+ dual   objective value = -4.79999996e+04
+ gap := trace(XZ)       = 1.53e-05
+ relative gap           = 1.59e-10
+ actual relative gap    = -4.25e-09
+ rel. primal infeas (scaled problem)   = 2.14e-12
+ rel. dual     "        "       "      = 2.45e-09
+ rel. primal infeas (unscaled problem) = 0.00e+00
+ rel. dual     "        "       "      = 0.00e+00
+ norm(X), norm(y), norm(Z) = 1.2e+03, 7.3e+01, 2.2e+02
+ norm(A), norm(b), norm(C) = 6.3e+00, 2.5e+03, 2.1e+02
+ Total CPU time (secs)  = 0.35  
+ CPU time per iteration = 0.04  
+ termination code       =  0
+ DIMACS: 3.2e-12  0.0e+00  3.5e-09  0.0e+00  -4.2e-09  1.6e-10
+-------------------------------------------------------------------
+ 
+------------------------------------------------------------
+Status: Solved
+Optimal value (cvx_optval): +141000
+ 
+
+temps2_cvx =
+
+    1.3020
+
+</pre><h2>Lineaire et standard avec CVX<a name="11"></a></h2><pre class="codeinput"><span class="comment">% ici on choisis de vectoriser x mais on peux faire autrement</span>
+
+e = ones(1,n);
+z =zeros(1,n);
+I =eye(n);
+M = [e z z z; z e z z; z z e z; z z z e ;repmat(I,1,p)];
+Cl =reshape(C,1,n*p);
+bb = [b ; a];
+
+tic
+cvx_begin
+variable <span class="string">x(n*p)</span>
+dual <span class="string">variables</span> <span class="string">D</span> <span class="string">pos</span>;
+minimize( Cl*x )
+subject <span class="string">to</span>
+D : M*x == bb;
+pos : x &gt;= 0;
+cvx_end
+temps2_cvxFS=toc
+</pre><pre class="codeoutput"> 
+Calling SDPT3 4.0: 12 variables, 7 equality constraints
+------------------------------------------------------------
+
+ num. of constraints =  7
+ dim. of linear var  = 12
+*******************************************************************
+   SDPT3: Infeasible path-following algorithms
+*******************************************************************
+ version  predcorr  gam  expon  scale_data
+    NT      1      0.000   1        0    
+it pstep dstep pinfeas dinfeas  gap      prim-obj      dual-obj    cputime
+-------------------------------------------------------------------
+ 0|0.000|0.000|4.7e+00|3.5e+00|4.1e+06| 1.292998e+05  0.000000e+00| 0:0:00| chol  1  1 
+ 1|0.993|1.000|3.2e-02|8.1e-03|4.5e+05|-8.942623e+03 -4.357453e+05| 0:0:00| chol  1  1 
+ 2|1.000|0.909|8.1e-08|9.3e-03|4.0e+04|-2.842906e+04 -6.694043e+04| 0:0:00| chol  1  1 
+ 3|0.732|1.000|2.1e-08|7.3e-04|2.0e+04|-4.101713e+04 -6.063243e+04| 0:0:00| chol  1  1 
+ 4|0.983|0.953|4.0e-08|2.4e-04|8.1e+02|-4.766245e+04 -4.843053e+04| 0:0:00| chol  1  1 
+ 5|0.986|0.987|6.4e-10|6.8e-05|1.1e+01|-4.799538e+04 -4.799459e+04| 0:0:00| chol  1  1 
+ 6|0.989|0.989|1.3e-11|2.0e-05|1.2e-01|-4.799995e+04 -4.799658e+04| 0:0:00| chol  2  2 
+ 7|0.989|0.989|9.7e-11|2.2e-07|1.3e-03|-4.800000e+04 -4.799996e+04| 0:0:00| chol  2  1 
+ 8|0.989|0.989|2.1e-12|2.4e-09|1.5e-05|-4.800000e+04 -4.800000e+04| 0:0:00|
+  stop: max(relative gap, infeasibilities) &lt; 1.49e-08
+-------------------------------------------------------------------
+ number of iterations   =  8
+ primal objective value = -4.80000000e+04
+ dual   objective value = -4.79999996e+04
+ gap := trace(XZ)       = 1.53e-05
+ relative gap           = 1.59e-10
+ actual relative gap    = -4.25e-09
+ rel. primal infeas (scaled problem)   = 2.14e-12
+ rel. dual     "        "       "      = 2.45e-09
+ rel. primal infeas (unscaled problem) = 0.00e+00
+ rel. dual     "        "       "      = 0.00e+00
+ norm(X), norm(y), norm(Z) = 1.2e+03, 7.3e+01, 2.2e+02
+ norm(A), norm(b), norm(C) = 6.3e+00, 2.5e+03, 2.1e+02
+ Total CPU time (secs)  = 0.07  
+ CPU time per iteration = 0.01  
+ termination code       =  0
+ DIMACS: 3.2e-12  0.0e+00  3.5e-09  0.0e+00  -4.2e-09  1.6e-10
+-------------------------------------------------------------------
+ 
+------------------------------------------------------------
+Status: Solved
+Optimal value (cvx_optval): +141000
+ 
+
+temps2_cvxFS =
+
+    0.2288
+
+</pre><h2>Avec linprog<a name="12"></a></h2><pre class="codeinput">tic
+[xl c e o p] = linprog(Cl',[],[],M,bb,0*Cl);
+temps2_linprog=toc
+</pre><pre class="codeoutput">Optimization terminated.
+
+temps2_linprog =
+
+    0.1643
+
+</pre><h2>Avec GUROBI<a name="13"></a></h2><pre class="codeinput">clear <span class="string">model</span>;
+model.obj = Cl;
+model.A =sparse(M);
+model.sense = [<span class="string">'='</span>;<span class="string">'='</span>;<span class="string">'='</span>;<span class="string">'='</span>;<span class="string">'='</span>;<span class="string">'='</span>;<span class="string">'='</span>];
+model.rhs = bb;
+model.lb =zeros(size(x));
+clear <span class="string">params</span>;
+params.Presolve = 2;
+params.TimeLimit = 100;
+tic
+result = gurobi(model, params);
+temps2_gurobi=toc
+disp(result.objval);
+</pre><pre class="codeoutput">Optimize a model with 7 rows, 12 columns and 24 nonzeros
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [1e+01, 2e+02]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [4e+02, 2e+03]
+Presolve removed 1 rows and 0 columns
+Presolve time: 0.01s
+Presolved: 6 rows, 12 columns, 20 nonzeros
+
+Iteration    Objective       Primal Inf.    Dual Inf.      Time
+       0    8.6000000e+04   2.399099e+03   0.000000e+00      0s
+       4    1.4100000e+05   0.000000e+00   0.000000e+00      0s
+
+Solved in 4 iterations and 0.01 seconds
+Optimal objective  1.410000000e+05
+
+temps2_gurobi =
+
+    0.0360
+
+      141000
+
+</pre><h2>Avec Cplex<a name="14"></a></h2><pre class="codeinput">tic
+[xcl c e o p] = cplexlp(Cl',[],[],M,bb,0*Cl);
+temps2_cplex=toc
+</pre><pre class="codeoutput">
+temps2_cplex =
+
+    0.0583
+
+</pre><h2>Avec GLPK<a name="15"></a></h2><pre class="codeinput">ctype =<span class="string">'SSSSSSS'</span>;        <span class="comment">% contraintes d'&eacute;&eacute;galites</span>
+vartype =<span class="string">'CCCCCCCCCCCC'</span>; <span class="comment">% variables continues</span>
+s = 1;                    <span class="comment">% 1 minimisation (-1 -&gt; maximisation)</span>
+param.msglev = 1;
+param.itlim = 100;
+tic
+[xmin_g,fmin,status,extra]=glpk(Cl',M,bb,0*Cl, [], ctype, vartype, s, param);
+temps2_glpk=toc
+</pre><pre class="codeoutput">
+temps2_glpk =
+
+    0.0136
+
+</pre><h2>Comparaison des solveurs<a name="16"></a></h2><pre class="codeinput">[xl result.x xcl xmin_g]
+
+<span class="comment">% Pour ce probleme, c'est glpk qui fourni la solution en un temps minimal</span>
+<span class="comment">% de 0.01s, cplex et gurobi sont equivalent avec 0.05s et 0.06s .. linprog</span>
+<span class="comment">% est loin derriere avec 0.16s et cvx avec la forme standard 0.24s</span>
+</pre><pre class="codeoutput">
+ans =
+
+  400.0000  400.0000  400.0000  400.0000
+    0.0000         0         0         0
+  300.0000  300.0000  300.0000  300.0000
+    0.0000         0         0         0
+  600.0000  600.0000  600.0000  600.0000
+    0.0000         0         0         0
+    0.0000         0         0         0
+  400.0000  400.0000  400.0000  400.0000
+  600.0000  600.0000  600.0000  600.0000
+    0.0000         0         0         0
+  500.0000  500.0000  500.0000  500.0000
+    0.0000         0         0         0
+
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2015b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+close all
+clear all
+clc
+%% TP3 PROG LINEAIRE
+%Question 1
+%% Avec CVX
+tic 
+cvx_begin
+variables x_1 x_2
+dual variables lip glu pro die p1 p2;
+minimize( 30*x_1 + 20*x_2 )
+subject to
+lip : 8 *x_1 + 12* x_2 >= 24;
+glu : 12 *x_1 + 12 *x_2 >= 36;
+pro : 2 *x_1 + x_2 >= 4;
+die : x_1 + x_2 <= 5;
+p1 : x_1 >=0;
+p2 : x_2 >=0;
+cvx_end
+temps_cvx=toc;
+
+%% Sous forme matriciel 
+f = [30 ; 20];
+b = [24;36;4;-5];
+A = [8 12 ; 12 12 ; 2 1 ; -1 -1];
+
+%% Avec CVX sous forme standard
+tic
+cvx_begin
+variable x(2)
+dual variables a p;
+minimize( f'*x )
+subject to
+    a : A*x >= b
+    p : x>=0;
+cvx_end  
+temps_cvxMatriciel=toc
+
+%% Avec GLPK sous forme standard
+ctype ='UUUU'; % contraintes dé'égalites
+vartype ='CC'; % variables continues
+s = 1;          % 1 minimisation (-1 -> maximisation)
+param.msglev = 1;
+param.itlim = 100;
+tic
+[xmin_g,fmin,status,extra]=glpk(f,-A,-b,0*f, [], ctype, vartype, s, param);
+temps_GLPK=toc
+%% Avec linprog sous forme standard
+tic
+[xl c e o p] = linprog(f,-A,-b,[],[],0*f);
+temps_linprog=toc;
+
+%% Comparaison des differents solveurs
+[[x_1;x_2] x xl xmin_g]
+
+% Les solveurs trouvent les memes solutions. 
+% Par contre, GLPK est le solveur le plus rapide avec un temps d'execution
+% de 0.01s, par rapport à linprog (0.18s) et cvx avec forme standard(0.28s)
+
+
+%% Question 2 
+%% lineaire avec CVX
+close all
+clear all
+clc
+
+
+a = [400; 1500; 900];
+b = [700; 600; 1000; 500];
+C = [20 40 70 50
+100 60 90 80
+10 110 30 200];
+[n,p] =size(C);
+tic
+cvx_begin
+    variable X(n,p)
+    dual variables D A pos;
+    minimize(sum(sum(C.*X)))
+    subject to
+        D : sum(X) == b';
+        A : sum(X') == a';
+        pos : X >= 0;
+cvx_end
+temps2_cvx=toc
+
+
+%% Lineaire et standard avec CVX
+
+% ici on choisis de vectoriser x mais on peux faire autrement
+
+e = ones(1,n);
+z =zeros(1,n);
+I =eye(n);
+M = [e z z z; z e z z; z z e z; z z z e ;repmat(I,1,p)];
+Cl =reshape(C,1,n*p);
+bb = [b ; a];
+
+tic
+cvx_begin
+variable x(n*p)
+dual variables D pos;
+minimize( Cl*x )
+subject to
+D : M*x == bb;
+pos : x >= 0;
+cvx_end
+temps2_cvxFS=toc
+
+
+%% Avec linprog
+tic
+[xl c e o p] = linprog(Cl',[],[],M,bb,0*Cl);
+temps2_linprog=toc
+
+%% Avec GUROBI
+clear model;
+model.obj = Cl;
+model.A =sparse(M);
+model.sense = ['=';'=';'=';'=';'=';'=';'='];
+model.rhs = bb;
+model.lb =zeros(size(x));
+clear params;
+params.Presolve = 2;
+params.TimeLimit = 100;
+tic
+result = gurobi(model, params);
+temps2_gurobi=toc
+disp(result.objval);
+
+%% Avec Cplex
+tic
+[xcl c e o p] = cplexlp(Cl',[],[],M,bb,0*Cl);
+temps2_cplex=toc
+
+
+%% Avec GLPK 
+
+ctype ='SSSSSSS';        % contraintes d'éégalites
+vartype ='CCCCCCCCCCCC'; % variables continues
+s = 1;                    % 1 minimisation (-1 -> maximisation)
+param.msglev = 1;
+param.itlim = 100;
+tic
+[xmin_g,fmin,status,extra]=glpk(Cl',M,bb,0*Cl, [], ctype, vartype, s, param);
+temps2_glpk=toc
+
+%% Comparaison des solveurs
+
+[xl result.x xcl xmin_g]
+
+% Pour ce probleme, c'est glpk qui fourni la solution en un temps minimal
+% de 0.01s, cplex et gurobi sont equivalent avec 0.05s et 0.06s .. linprog
+% est loin derriere avec 0.16s et cvx avec la forme standard 0.24s
+
+
+
+
+
+
+
+
+
+##### SOURCE END #####
+--></body></html>
